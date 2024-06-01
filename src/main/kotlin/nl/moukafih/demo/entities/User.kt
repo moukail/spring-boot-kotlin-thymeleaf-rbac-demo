@@ -20,6 +20,7 @@ data class User(
     @field:Email(message = "Email should be valid")
     @Column(nullable = false, unique = true)
     val email: String,
+    @Column(nullable = false)
     val role: String,
     @field:NotBlank(message = "First name is required")
     @Column(nullable = false)
