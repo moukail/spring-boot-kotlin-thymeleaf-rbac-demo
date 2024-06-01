@@ -1,0 +1,11 @@
+services:
+  database:
+    #container_name: database
+    restart: unless-stopped
+    image: 'postgres:16.3-alpine3.20'
+    environment:
+      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=myuser'
+    ports:
+      - '5432'

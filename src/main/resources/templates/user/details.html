@@ -1,0 +1,81 @@
+<!doctype html>
+<html th:replace="~{user_layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sticky Footer Navbar Template · Bootstrap v5.3</title>
+</head>
+
+<main class="flex-shrink-0">
+    <div class="container">
+        <h2 class="mt-5">User details</h2>
+        <div class="text-end">
+            <a href="/users">back to list</a>
+        </div>
+        <div class="card mb-3" style="max-width: 600px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <svg class="bd-placeholder-img img-fluid rounded-start" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image" preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Placeholder</title>
+                        <rect width="100%" height="100%" fill="#868e96"/>
+                        <text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image</text>
+                    </svg>
+                    <!--<picture>
+                        <source type="image/svg+xml" srcset="path/to/logo.svg">
+                        <img src="path/to/logo-1x.png" srcset="path/to/logo-2x.png 2x, path/to/logo-3x.png 3x" alt="Logo description">
+                    </picture>-->
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body" style="min-height: 180px;">
+                        <h5 class="card-title">[[${user.firstname}]] [[${user.lastname}]]</h5>
+                        <dl class="row">
+                            <dt class="col-sm-3">Email:</dt>
+                            <dd class="col-sm-9" th:text="${user.email}">Email</dd>
+                            <dt class="col-sm-3">Role:</dt>
+                            <dd class="col-sm-9" th:switch="${user.role}">
+                                <p th:case="'ROLE_ADMIN'">Admin</p>
+                                <p th:case="'ROLE_MANAGER'">Manager</p>
+                                <p th:case="'ROLE_USER'">User</p>
+                                <!-- * for default case -->
+                                <p th:case="*">User is some other thing</p>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="card-body text-end">
+                        <a th:href="|/users/${user.id}/edit|" class="btn">Edit</a>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <figure class="text-end" style="max-width: 600px;">
+            <figcaption class="blockquote-footer">
+                Last login 3 mins ago
+            </figcaption>
+        </figure>
+
+        <!-- Modal -->
+        <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="deleteModalLabel">Delete user</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure?
+                    </div>
+                    <div class="modal-footer">
+                        <form class="needs-validation" name="user" th:action="|/users/${id}/delete|" th:object="${user}" method="post" novalidate>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</html>
