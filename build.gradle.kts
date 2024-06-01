@@ -1,8 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.text.SimpleDateFormat
+import java.util.*
 
 plugins {
 	id("org.springframework.boot") version "3.2.6"
 	id("io.spring.dependency-management") version "1.1.5"
+	id("org.liquibase.gradle") version "2.2.1"
 	kotlin("jvm") version "1.9.24"
 	kotlin("plugin.spring") version "1.9.24"
 	kotlin("plugin.jpa") version "1.9.24"
@@ -33,6 +36,16 @@ dependencies {
 	implementation("org.webjars:bootstrap:5.3.3")
 	runtimeOnly("org.postgresql:postgresql")
 	testRuntimeOnly("com.h2database:h2")
+
+	// liquibase
+	liquibaseRuntime("org.liquibase:liquibase-core")
+	liquibaseRuntime("info.picocli:picocli:4.7.6")
+	liquibaseRuntime("org.postgresql:postgresql")
+	liquibaseRuntime("org.liquibase.ext:liquibase-hibernate6:4.28.0")
+	liquibaseRuntime("org.springframework.boot:spring-boot-starter-data-jpa")
+	liquibaseRuntime(sourceSets.getByName("main").output)
+	liquibaseRuntime(sourceSets.getByName("main").runtimeClasspath)
+
 }
 
 tasks.withType<KotlinCompile> {
@@ -45,3 +58,29 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+liquibase {
+	activities.register("main") {
+		arguments = mapOf(
+			"changeLogFile" to "src/main/resources/db/changelog/changelog-master.yml",
+		)
+	}
+}
+
+tasks.register("myDiffChangelog") {
+	liquibase {
+		activities {
+			named("main").configure {
+				arguments = mapOf(
+					"changeLogFile" to "src/main/resources/db/changelog/changes/${
+						SimpleDateFormat("yyyy-MM-dd_HH_mm_ss").format(
+							Date()
+						)}_changelog.sql",
+				)
+			}
+		}
+	}
+}
+
+tasks["liquibaseDiff"].dependsOn("compileJava")
+tasks["liquibaseDiffChangelog"].dependsOn("myDiffChangelog")
