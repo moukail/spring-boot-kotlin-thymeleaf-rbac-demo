@@ -11,12 +11,16 @@
         <div class="text-end">
             <a href="/users">back to list</a>
         </div>
+
         <div class="card" style="max-width: 600px;">
             <div class="card-body">
                 <form class="row g-3 needs-validation" name="user" th:action="@{${action}}" th:object="${user}" method="post" novalidate>
                     <div class="col-md-6">
                         <label for="email" class="form-label required">Email</label>
-                        <input type="email" id="email" class="form-control" th:field="*{email}" required/>
+                        <input type="email" id="email" class="form-control" th:field="*{email}" th:classappend="${not #lists.isEmpty(#fields.errors('email'))} ? is-invalid" required/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+                            Valid email is required.
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label required" for="user_role">Role</label>
@@ -28,11 +32,17 @@
                     </div>
                     <div class="col-md-6">
                         <label for="firstname" class="form-label required">First name</label>
-                        <input th:field="*{firstname}" type="text" id="firstname" class="form-control" />
+                        <input type="text" id="firstname" class="form-control" th:field="*{firstname}" th:classappend="${not #lists.isEmpty(#fields.errors('firstname'))} ? is-invalid"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}">
+                            Valid first name is required.
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label for="lastname" class="form-label required">Last name</label>
-                        <input th:field="*{lastname}" type="text"  id="lastname" required="required" maxlength="255" class="form-control" />
+                        <input type="text"  id="lastname" class="form-control"  th:field="*{lastname}" th:classappend="${not #lists.isEmpty(#fields.errors('lastname'))} ? is-invalid"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}">
+                            Valid first name is required.
+                        </div>
                     </div>
                     <div class="col-12 text-end">
                         <button type="submit" class="btn btn-primary">Save</button>
