@@ -1,13 +1,13 @@
 <!doctype html>
 <html th:replace="~{user_layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Sticky Footer Navbar Template · Bootstrap v5.3</title>
+    <title>[[${form_title}]]</title>
 </head>
 <body>
 
 <main class="flex-shrink-0">
     <div class="container">
-        <h2 class="mt-5">[[${message}]]</h2>
+        <h2 class="mt-5">[[${form_title}]]</h2>
         <div class="text-end">
             <a href="/users">back to list</a>
         </div>

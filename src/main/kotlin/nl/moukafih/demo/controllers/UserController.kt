@@ -1,11 +1,11 @@
 package nl.moukafih.demo.controllers
 
 import jakarta.validation.Valid
-import nl.moukafih.demo.entities.User
-import nl.moukafih.demo.repositories.UserRepository
+import nl.moukafih.demo.dtos.UserDto
+import nl.moukafih.demo.exceptions.UserNotFoundException
+import nl.moukafih.demo.services.UserService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -13,86 +13,103 @@ import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 
 @Controller
-class UserController (private val userRepository: UserRepository) {
+@RequestMapping("/users")
+class UserController (private val userService: UserService) {
 
-    private final val log: Logger = LoggerFactory.getLogger(UserController::class.java)
+    private final val logger: Logger = LoggerFactory.getLogger(UserController::class.java)
 
-    @GetMapping("/users")
+    @GetMapping
     fun userIndex(model: Model): String {
-        log.info("--------------userIndex-----------------")
-        model["message"] = "Users"
-        model["users"] = userRepository.findAll()
+        model["users"] = userService.getAllUsers()
         return "user/index"
     }
 
-    @GetMapping("/users/add")
-    fun showAdd(@ModelAttribute("user") user: User?, bindingResult: BindingResult, model: Model) : String {
-        model["message"] = "Add User"
+    @GetMapping("/add")
+    fun showAdd(
+        @Valid @ModelAttribute("user") userDto: UserDto?,
+        bindingResult: BindingResult,
+        model: Model
+    ) : String {
+        model["form_title"] = "Add User"
         model["action"] = "/users/add"
         return "user/form"
     }
 
-    @PostMapping("/users/add")
-    fun performAdd(@Valid @ModelAttribute("user") user: User, bindingResult: BindingResult, model: Model): String {
-
-        if (userRepository.existsByEmail(user.email)) {
-            bindingResult.rejectValue("email", "error.user", "Duplicate email")
-        }
+    @PostMapping("/add")
+    fun performAdd(
+        @Valid @ModelAttribute("user") userDto: UserDto,
+        bindingResult: BindingResult,
+        model: Model
+    ): String {
 
         if (bindingResult.hasErrors()){
-            model["message"] = "Add User"
-            model["user"] = user
+            model["form_title"] = "Add User"
             model["action"] = "/users/add"
             return "user/form"
         }
 
-        userRepository.save(user)
-        return "redirect:/users"
-    }
-
-    @GetMapping("/users/{id}/edit")
-    fun showEdit(@PathVariable id: String, model: Model) : String {
-
-        val user: User = userRepository.findByIdOrNull(id) ?: return "redirect:/users"
-
-        model["message"] = "Edit User"
-        model["user"] = user
-        model["action"] = "/users/$id/edit"
-
-        return "user/form"
-    }
-
-    @PostMapping("/users/{id}/edit")
-    fun performEdit(@PathVariable id: String, @Valid @ModelAttribute user: User, bindingResult: BindingResult, model: Model): String {
-
-        val currentUser : User = userRepository.findById(id).get()
-
-        if (currentUser.email != user.email && userRepository.existsByEmail(user.email)) {
-            bindingResult.rejectValue("email", "error.user", "Duplicate email")
+        return try {
+            userService.createUser(userDto)
+            logger.info("User created successfully: $userDto")
+            "redirect:/users"
+        } catch (e: IllegalArgumentException) {
+            bindingResult.rejectValue("email", "error.user", e.message ?: "Duplicate email")
+            return "user/form"
         }
+    }
+
+    @GetMapping("/{id}/edit")
+    fun showEdit(@PathVariable id: String, model: Model) : String {
+        try {
+            val userDto: UserDto = userService.getUserById(id)
+            model["user"] = userDto
+            model["form_title"] = "Edit User"
+            model["action"] = "/users/$id/edit"
+            return "user/form"
+        } catch (e : UserNotFoundException) {
+            return "redirect:/users"
+        }
+    }
+
+    @PostMapping("/{id}/edit")
+    fun performEdit(
+        @PathVariable id: String,
+        @Valid @ModelAttribute("user") userDto: UserDto,
+        bindingResult: BindingResult,
+        model: Model
+    ): String {
 
         if (bindingResult.hasErrors()){
-            model["message"] = "Edit User"
-            model["user"] = user
+            model["form_title"] = "Edit User"
             model["action"] = "/users/$id/edit"
             return "user/form"
         }
 
-        userRepository.save(user)
-        return "redirect:/users"
+        return try {
+            userService.updateUser(id, userDto)
+            logger.info("Updated user: {}", userDto)
+            "redirect:/users"
+        } catch (e: IllegalArgumentException) {
+            bindingResult.rejectValue("email", "error.user", e.message ?: "Duplicate email")
+            return "user/form"
+        }
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     fun details(@PathVariable id: String, model: Model) : String {
-        val user: User = userRepository.findByIdOrNull(id) ?: return "redirect:/users"
-        model["user"] = user
-        return "user/details"
+        try {
+            val user: UserDto = userService.getUserById(id)
+            model["user"] = user
+            return "user/details"
+        } catch (e : UserNotFoundException) {
+            return "redirect:/users"
+        }
     }
 
-    @PostMapping("/users/{id}/delete")
-    fun performDelete(@PathVariable id: String, model: Model) : String {
-        val user: User = userRepository.findByIdOrNull(id) ?: return "redirect:/users"
-        userRepository.delete(user)
+    @PostMapping("/{id}/delete")
+    fun deleteUser(@PathVariable id: String) : String {
+        userService.deleteUser(id)
+        logger.info("Deleted user with id: {}", id)
         return "redirect:/users"
     }
 }
