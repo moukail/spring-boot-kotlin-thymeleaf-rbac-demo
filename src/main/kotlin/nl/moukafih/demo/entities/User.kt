@@ -26,6 +26,9 @@ data class User(
     @Column(nullable = false)
     val firstname: String,
     val lastname: String,
+    @field:NotBlank(message = "Password is required")
+    @Column(nullable = false)
+    var password: String
 ){
     @CreationTimestamp(source = SourceType.DB)
     val createdAt: Date = Date()

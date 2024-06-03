@@ -2,6 +2,7 @@ package nl.moukafih.demo.controllers
 
 import jakarta.validation.Valid
 import nl.moukafih.demo.dtos.UserDto
+import nl.moukafih.demo.exceptions.EmailNotUniqueException
 import nl.moukafih.demo.exceptions.UserNotFoundException
 import nl.moukafih.demo.services.UserService
 import org.slf4j.Logger
@@ -52,8 +53,8 @@ class UserController (private val userService: UserService) {
             userService.createUser(userDto)
             logger.info("User created successfully: $userDto")
             "redirect:/users"
-        } catch (e: IllegalArgumentException) {
-            bindingResult.rejectValue("email", "error.user", e.message ?: "Duplicate email")
+        } catch (e: EmailNotUniqueException) {
+            bindingResult.rejectValue("email", "error.user", e.message ?: "this email already exists")
             return "user/form"
         }
     }

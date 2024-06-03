@@ -1,0 +1,83 @@
+
+<!doctype html>
+<html lang="en" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.122.0">
+    <title>Register</title>
+
+    <link rel="stylesheet" href="webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+
+    <!-- Favicons -->
+<!--    <link rel="apple-touch-icon" href="/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" href="/docs/5.3/assets/img/favicons/manifest.json">
+    <link rel="mask-icon" href="/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
+    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon.ico">-->
+    <meta name="theme-color" content="#712cf9">
+
+    <link rel="stylesheet" href="/static/css/main.css" th:href="@{/css/main.css}" />
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="/static/css/sign-in.css" th:href="@{/css/sign-in.css}" />
+</head>
+<body class="d-flex align-items-center py-4 bg-body-tertiary">
+
+<div th:replace="~{fragments/theme_switcher :: theme_switcher}">theme_switcher</div>
+
+<main class="form-signin w-100 m-auto">
+
+    <div class="alert alert-success" role="alert" th:if="${param.success}">
+        You have successfully registered our app!
+    </div>
+
+    <form th:action="@{/register}" th:object="${registration}" method="post" novalidate>
+        <img class="mb-4" src="/static/images/bootstrap-logo.svg" th:src="@{/images/bootstrap-logo.svg}" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Please register</h1>
+
+        <div class="form-floating">
+            <input type="email" id="email" th:field="*{email}" class="form-control" th:classappend="${not #lists.isEmpty(#fields.errors('email'))} ? is-invalid" required>
+            <label for="email">Email address</label>
+            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
+        </div>
+        <div class="form-floating">
+            <input type="text" name="firstname" th:field="*{firstname}" class="form-control" id="firstname">
+            <label for="firstname">first name</label>
+            <div th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}" class="text-danger"></div>
+        </div>
+        <div class="form-floating">
+            <input type="text" name="lastname" th:field="*{lastname}" class="form-control" id="lastname">
+            <label for="lastname">last name</label>
+            <div th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}" class="text-danger"></div>
+        </div>
+        <div class="form-floating">
+            <input type="password" id="password" name="password" th:field="*{password}" class="form-control" th:classappend="${not #lists.isEmpty(#fields.errors('email'))} ? is-invalid" required>
+            <label for="password">Password</label>
+            <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></div>
+        </div>
+        <div class="form-floating">
+            <input type="password" name="confirmPassword" th:field="*{confirmPassword}" class="form-control" id="confirmPassword">
+            <label for="confirmPassword">Confirm password</label>
+            <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="text-danger"></div>
+        </div>
+        <div class="form-check text-start my-3">
+            <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Agreed
+            </label>
+        </div>
+        <button class="btn btn-primary w-100 py-2" type="submit">Register</button>
+        <p>Already registered? <a th:href="@{/login}">Login here</a></p>
+
+        <p class="mt-5 mb-3 text-body-secondary">&copy; 2017–2024</p>
+    </form>
+</main>
+<script src="/static/js/color-modes.js" th:src="@{/js/color-modes.js}"></script>
+<script src="webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

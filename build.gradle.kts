@@ -46,6 +46,10 @@ dependencies {
 	liquibaseRuntime(sourceSets.getByName("main").output)
 	liquibaseRuntime(sourceSets.getByName("main").runtimeClasspath)
 
+	// security
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+	testImplementation("org.springframework.security:spring-security-test")
 }
 
 tasks.withType<KotlinCompile> {

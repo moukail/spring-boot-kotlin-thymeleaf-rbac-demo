@@ -17,7 +17,7 @@ class UserRepositoryTests @Autowired constructor(
     @Test
     @DisplayName("User test")
     fun `When findByIdOrNull then return Article`() {
-        val user = User(email = "johnDoe", role = "USER", firstname = "John", lastname = "Doe")
+        val user = User(email = "johnDoe", password = "", role = "USER", firstname = "John", lastname = "Doe")
         entityManager.persist(user)
         entityManager.flush()
 
@@ -27,7 +27,7 @@ class UserRepositoryTests @Autowired constructor(
 
     @Test
     fun `When findByUsername then return User`() {
-        val user = User(email = "johnDoe", role = "USER", firstname = "John", lastname = "Doe")
+        val user = User(email = "johnDoe", password = "", role = "USER", firstname = "John", lastname = "Doe")
         entityManager.persist(user)
         entityManager.flush()
 
@@ -37,7 +37,7 @@ class UserRepositoryTests @Autowired constructor(
 
     @Test
     fun deleteUsers() {
-        val user = User(email = "johnDoe", role = "USER", firstname = "John", lastname = "Doe")
+        val user = User(email = "johnDoe", password = "", role = "USER", firstname = "John", lastname = "Doe")
         entityManager.persist(user)
         entityManager.flush()
 
