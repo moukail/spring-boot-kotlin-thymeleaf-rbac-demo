@@ -34,6 +34,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.webjars:bootstrap:5.3.3")
+	implementation("org.webjars.npm:htmx.org:1.9.12")
 	runtimeOnly("org.postgresql:postgresql")
 	testRuntimeOnly("com.h2database:h2")
 
