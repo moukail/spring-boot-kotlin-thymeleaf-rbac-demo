@@ -1,0 +1,80 @@
+<!doctype html>
+<html th:replace="~{user_layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Roles</title>
+</head>
+<body>
+<main class="flex-shrink-0">
+    <div class="container">
+        <h2 class="mt-5">Roles</h2>
+        <div class="text-end">
+            <a sec:authorize="hasAuthority('role_add')" href="/roles/add">Create role</a>
+        </div>
+        <div class="table-responsive small" th:switch="${#lists.size(roles) > 0}">
+            <p class="mt-5" th:case="false">No roles yet!</p>
+            <table class="table table-striped table-sm"  th:case="*">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">created at</th>
+                    <th scope="col">updated at</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="role : ${roles}">
+                    <td th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(role.name, 'ROLE_', '')))}">...</td>
+                    <td th:text="${#dates.format(role.createdAt, 'dd-MM-yyyy HH:mm')}">...</td>
+                    <td th:text="${#dates.format(role.updatedAt, 'dd-MM-yyyy HH:mm')}">...</td>
+                    <td>
+                        <a sec:authorize="hasAuthority('role_edit')" th:href="|/roles/${role.id}/edit|">edit</a>
+                        <a sec:authorize="hasAuthority('role_delete')" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" th:attr="data-bs-action=|/roles/${role.id}/delete|">delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- delete Modal -->
+    <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteModalLabel">Delete</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure?
+                </div>
+                <div class="modal-footer">
+                    <form class="needs-validation" name="deleteRole" th:action="@{/roles}" method="post" novalidate>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            'use strict'
+
+            const deleteModal = document.getElementById('deleteModal')
+            if (deleteModal) {
+                console.log('test')
+                deleteModal.addEventListener('show.bs.modal', event => {
+                    // Button that triggered the modal
+                    const button = event.relatedTarget
+                    // Extract info from data-bs-* attributes
+                    const action = button.getAttribute('data-bs-action')
+
+                    const modalForm = deleteModal.querySelector('.needs-validation')
+                    console.log('action', action)
+                    modalForm.action = action
+                })
+            }
+     })()
+    </script>
+</main>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html th:replace="~{user_layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>[[${form_title}]]</title>
+</head>
+<body>
+
+<main class="flex-shrink-0">
+    <div class="container">
+        <h2 class="mt-5">[[${form_title}]]</h2>
+        <div class="text-end">
+            <a  sec:authorize="hasAuthority('role_list')" href="/roles">back to list</a>
+        </div>
+
+        <form name="role" th:action="@{${action}}" th:object="${role}" method="post">
+            <div id="role">
+                <div class="form-floating">
+                    <input type="text" id="name" class="form-control" th:field="*{name}" th:classappend="${not #lists.isEmpty(#fields.errors('name'))} ? is-invalid"/>
+                    <label for="name" class="form-label required">Name</label>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                        Valid name is required.
+                    </div>
+                </div>
+                <fieldset class="mb-3">
+                    <legend class="checkbox-switch col-form-label required">Permissions</legend>
+                    <div id="role_permissions">
+                        <div class="form-check form-check-inline form-switch" style="width: 200px;" th:each="permission : ${permissions}">
+                            <input type="checkbox" class="form-check-input" th:field="*{permissionIds}" th:value="${permission.id}" th:checked="${role !=null and #lists.contains(role.permissionIds, permission.id)}"/>
+                            <label class="form-check-label checkbox-switch" th:text="${permission.name}">...</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="col-12 text-end">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>
