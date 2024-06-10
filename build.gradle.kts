@@ -66,7 +66,7 @@ tasks.withType<Test> {
 liquibase {
 	activities.register("main") {
 		arguments = mapOf(
-			"changeLogFile" to "src/main/resources/db/changelog/changelog-master.yml",
+			"changeLogFile" to "src/main/resources/db/changelog/db.changelog-master.yml",
 		)
 	}
 }
@@ -88,3 +88,4 @@ tasks.register("myDiffChangelog") {
 
 tasks["liquibaseDiff"].dependsOn("compileJava")
 tasks["liquibaseDiffChangelog"].dependsOn("myDiffChangelog")
+tasks["liquibaseGenerateChangelog"].dependsOn("myDiffChangelog")
