@@ -13,7 +13,7 @@
         </div>
         <div class="table-responsive small" th:switch="${#lists.size(users) > 0}">
             <p class="mt-5" th:case="false">No users yet!</p>
-            <table class="table table-striped table-sm"  th:case="*">
+            <table class="table table-striped table-sm" th:case="*">
                 <thead>
                 <tr>
                     <th scope="col">Email</th>
