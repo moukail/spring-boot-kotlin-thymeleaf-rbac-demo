@@ -1,5 +1,5 @@
 <!doctype html>
-<html th:replace="~{user_layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{user_layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <title>Users</title>
 </head>
@@ -9,7 +9,7 @@
     <div class="container">
         <h2 class="mt-5">Users</h2>
         <div class="text-end">
-            <a href="/users/add">Create user</a>
+            <a sec:authorize="hasAuthority('user_add')" href="/users/add">Create user</a>
         </div>
         <div class="table-responsive small" th:switch="${#lists.size(users) > 0}">
             <p class="mt-5" th:case="false">No users yet!</p>
@@ -30,16 +30,12 @@
                     <td th:text="${user.email}">...</td>
                     <td th:text="${user.firstname}">...</td>
                     <td th:text="${user.lastname}">...</td>
-                    <td th:switch="${user.role}">
-                        <span th:case="'ROLE_ADMIN'">Admin</span>
-                        <span th:case="'ROLE_MANAGER'">Manager</span>
-                        <span th:case="'ROLE_USER'">User</span>
-                    </td>
+                    <td th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(user.role.name, 'ROLE_', '')))}">...</td>
                     <td th:text="${#dates.format(user.createdAt, 'dd-MM-yyyy HH:mm')}">...</td>
                     <td th:text="${#dates.format(user.updatedAt, 'dd-MM-yyyy HH:mm')}">...</td>
                     <td>
-                        <a th:href="|/users/${user.id}/edit|">edit</a>
-                        <a th:href="|/users/${user.id}|">details</a>
+                        <a sec:authorize="hasAuthority('user_edit')" th:href="|/users/${user.id}/edit|">edit</a>
+                        <a sec:authorize="hasAuthority('user_details')" th:href="|/users/${user.id}|">details</a>
                     </td>
                 </tr>
                 </tbody>

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import org.hibernate.annotations.CreationTimestamp
@@ -20,13 +21,13 @@ data class User(
     @field:Email(message = "Email should be valid")
     @Column(nullable = false, unique = true)
     val email: String,
-    @Column(nullable = false)
-    val role: String,
+    @ManyToOne
+    val role: Role,
     @field:NotBlank(message = "First name is required")
     @Column(nullable = false)
     val firstname: String,
     val lastname: String,
-    @field:NotBlank(message = "Password is required")
+    //@field:NotBlank(message = "Password is required")
     @Column(nullable = false)
     var password: String
 ){

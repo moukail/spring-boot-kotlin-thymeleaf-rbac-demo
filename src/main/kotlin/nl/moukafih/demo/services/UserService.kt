@@ -1,10 +1,9 @@
 package nl.moukafih.demo.services
 
+import jakarta.persistence.EntityNotFoundException
 import jakarta.validation.Valid
-import nl.moukafih.demo.dtos.UserDto
+import nl.moukafih.demo.dtos.UserDTO
 import nl.moukafih.demo.entities.User
-import nl.moukafih.demo.exceptions.EmailNotUniqueException
-import nl.moukafih.demo.exceptions.UserNotFoundException
 import nl.moukafih.demo.repositories.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,21 +21,21 @@ class UserService(
     private final val logger: Logger = LoggerFactory.getLogger(UserService::class.java)
     private val random = SecureRandom()
 
-    fun getAllUsers(): List<UserDto> {
+    fun getAllUsers(): List<UserDTO> {
         return userRepository.findAll().map { convertToDto(it) }
     }
 
-    fun getUserById(id: String): UserDto {
+    fun getUserById(id: String): UserDTO {
         val user = userRepository.findById(id)
-            .orElseThrow { UserNotFoundException("User not found with id: $id") }
+            .orElseThrow { EntityNotFoundException("User not found with id: $id") }
         return convertToDto(user)
     }
 
     @Transactional
-    fun createUser(@Valid userDto: UserDto) {
+    fun createUser(@Valid userDto: UserDTO) {
 
         if (userRepository.existsByEmail(userDto.email)) {
-            throw EmailNotUniqueException("A user with this email already exists")
+            throw IllegalArgumentException("A user with this email already exists")
         }
 
         val user = convertToEntity(userDto)
@@ -47,9 +46,9 @@ class UserService(
     }
 
     @Transactional
-    fun updateUser(id: String, @Valid userDto: UserDto) {
+    fun updateUser(id: String, @Valid userDto: UserDTO) {
         val currentUser : User = userRepository.findById(id)
-            .orElseThrow { UserNotFoundException("User not found with id: $id") }
+            .orElseThrow { EntityNotFoundException("User not found with id: $id") }
 
         if (currentUser.email != userDto.email && userRepository.existsByEmail(userDto.email)) {
             throw IllegalArgumentException("A user with this email already exists")
@@ -62,12 +61,12 @@ class UserService(
     @Transactional
     fun deleteUser(id: String) {
         val user = userRepository.findById(id)
-            .orElseThrow { UserNotFoundException("User not found with id: $id") }
+            .orElseThrow { EntityNotFoundException("User not found with id: $id") }
         userRepository.delete(user)
     }
 
-    private fun convertToDto(user: User): UserDto {
-        return UserDto(
+    private fun convertToDto(user: User): UserDTO {
+        return UserDTO(
             id = user.id,
             email = user.email,
             role = user.role,
@@ -78,7 +77,7 @@ class UserService(
         )
     }
 
-    private fun convertToEntity(userDto: UserDto): User {
+    private fun convertToEntity(userDto: UserDTO): User {
         return User(
             id = userDto.id,
             email = userDto.email,

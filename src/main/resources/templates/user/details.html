@@ -1,5 +1,5 @@
 <!doctype html>
-<html th:replace="~{user_layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{user_layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <title>User details</title>
 </head>
@@ -9,7 +9,7 @@
     <div class="container">
         <h2 class="mt-5">User details</h2>
         <div class="text-end">
-            <a href="/users">back to list</a>
+            <a sec:authorize="hasAuthority('user_list')" href="/users">back to list</a>
         </div>
         <div class="card mb-3" style="max-width: 600px;">
             <div class="row g-0">
@@ -29,21 +29,15 @@
                         <h5 class="card-title">[[${user.firstname}]] [[${user.lastname}]]</h5>
                         <dl class="row">
                             <dt class="col-sm-3">Email:</dt>
-                            <dd class="col-sm-9" th:text="${user.email}">Email</dd>
+                            <dd class="col-sm-9" th:text="${user.email}">...</dd>
                             <dt class="col-sm-3">Role:</dt>
-                            <dd class="col-sm-9" th:switch="${user.role}">
-                                <p th:case="'ROLE_ADMIN'">Admin</p>
-                                <p th:case="'ROLE_MANAGER'">Manager</p>
-                                <p th:case="'ROLE_USER'">User</p>
-                                <!-- * for default case -->
-                                <p th:case="*">User is some other thing</p>
-                            </dd>
+                            <dd class="col-sm-9" th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(user.role.name, 'ROLE_', '')))}">...</dd>
                         </dl>
                     </div>
                     <div class="card-body text-end">
-                        <a th:href="|/users/${user.id}/edit|" class="btn">Edit</a>
+                        <a sec:authorize="hasAuthority('user_edit')" th:href="|/users/${user.id}/edit|" class="btn">Edit</a>
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <button sec:authorize="hasAuthority('user_delete')" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                             Delete
                         </button>
                     </div>
