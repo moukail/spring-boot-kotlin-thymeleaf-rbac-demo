@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:replace="${title}">Layout Title</title>
-    <link rel="stylesheet" href="webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel="stylesheet" />
     <meta name="theme-color" content="#712cf9">
 
     <link rel="stylesheet" href="/static/css/main.css" th:href="@{/css/main.css}" />
